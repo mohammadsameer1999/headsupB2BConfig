@@ -1,0 +1,147 @@
+version: '3.0'
+
+services:
+  discovery:
+    image: "hcorptech/discoveryserver:0.0.1"
+    container_name: discovery-ms
+    ports:
+      - "8761:8761"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - hindalco
+
+  configserver:
+    image: "hcorptech/configserver:0.0.1"
+    container_name: configserver-ms
+    ports:
+      - "8888:8888"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - hindalco
+    depends_on:
+      discovery:
+        condition: service_started
+    environment:
+      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+
+  apigateway:
+    image: "hcorptech/apigateway:0.0.1"
+    container_name: apigateway-ms
+    ports:
+      - "80:9090"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - hindalco
+    depends_on:
+      - discovery
+    environment:
+      - MONGODB_HOST=mongodb
+      - MONGODB_PORT=27017
+      - MONGODB_DATABASE=hindalco
+      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      - SERVER_PORT=9090
+      - JWT_SECRET=abcd123abcd123
+      - JWT_EXPIRATION=3600000
+
+  userservice:
+    image: "hcorptech/userservice:0.0.1"
+    container_name: userservice-ms
+    ports:
+      - "8081:8081"
+    deploy:
+      resources:
+        limits:
+          memory: 700m 
+    networks:
+      - hindalco
+    depends_on:
+      - discovery
+      - configserver
+      - apigateway
+    environment:
+      - MONGODB_HOST=mongodb
+      - MONGODB_PORT=27017
+      - MONGODB_DATABASE=hindalco
+      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      - SERVER_PORT=8081
+      - JWT_SECRET=abcd123abcd123
+      - JWT_EXPIRATION=3600000
+
+  plantmicroservice:
+    image: "hcorptech/plantmicroservice:0.0.1"
+    container_name: plantservice-ms
+    ports:
+      - "8082:8082"
+    deploy:
+      resources:
+        limits:
+          memory: 700m 
+    networks:
+      - hindalco
+    depends_on:
+      - discovery
+      - configserver
+      - apigateway
+    environment:
+      - MONGODB_HOST=mongodb
+      - MONGODB_PORT=27017
+      - MONGODB_DATABASE=hindalco
+      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      - SERVER_PORT=8082
+      - JWT_SECRET=abcd123abcd123
+      - JWT_EXPIRATION=3600000
+
+  helperservice:
+    image: "hcorptech/helperservice:0.0.1"
+    container_name: helperservice-ms
+    ports:
+      - "8083:8083"
+    deploy:
+      resources:
+        limits:
+          memory: 700m 
+    networks:
+      - hindalco
+    depends_on:
+      - discovery
+      - configserver
+      - apigateway
+    environment:
+      - MONGODB_HOST=mongodb
+      - MONGODB_PORT=27017
+      - MONGODB_DATABASE=hindalco
+      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      - SERVER_PORT=8083
+      - JWT_SECRET=abcd123abcd123
+      - JWT_EXPIRATION=3600000
+      
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    networks:
+      - hindalco
+    deploy:
+      resources:
+        limits:
+          memory: 500m
+    volumes:
+      - mongodb_data:/data/db
+
+networks:
+  hindalco:
+    driver: "bridge"
+
+volumes:
+  mongodb_data:
+    driver: local

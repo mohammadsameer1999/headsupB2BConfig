@@ -1,0 +1,221 @@
+version: '3'
+
+x-common-config: &common-config
+  networks:
+    - hindalco
+  deploy:
+    resources:
+      limits:
+        memory: 1200m
+
+x-microservice-config: &microservice-config
+  <<: *common-config
+  depends_on:
+    - discovery
+    - configserver
+    - apigateway
+  environment:
+    - MONGODB_HOST=159.89.171.87
+    - MONGODB_PORT=25755
+    - MONGODB_DATABASE=hindalco
+    - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+    - JWT_SECRET=abcd123abcd123
+    - JWT_EXPIRATION=3600000
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - apigateway
+    networks:
+      - hindalco
+      
+  discovery:
+    <<: *common-config
+    image: "hcorptech/discoveryserver:0.0.1"
+    container_name: discovery-ms
+    ports:
+      - "8761:8761"
+    deploy:
+      resources:
+        limits:
+          memory: 1200m
+
+  configserver:
+    <<: *common-config
+    image: "hcorptech/configserver:0.0.1"
+    container_name: configserver-ms
+    ports:
+      - "8888:8888"
+    depends_on:
+      discovery:
+        condition: service_started
+    environment:
+      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+
+  apigateway:
+    <<: *common-config
+    image: "hcorptech/apigateway:0.0.1"
+    container_name: apigateway-ms
+    ports:
+      - "80:9090"
+    depends_on:
+      - discovery
+    environment:
+      - MONGODB_HOST=159.89.171.87
+      - MONGODB_PORT=25755
+      - MONGODB_DATABASE=hindalco
+      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      - SERVER_PORT=9090
+      - JWT_SECRET=abcd123abcd123
+      - JWT_EXPIRATION=3600000
+      - JAVA_TOOL_OPTION="-javaagent:/app/libs/opentelemetry-javaagent-1.33.5.jar"
+      - OTEL_EXPORTER_OTLP_ENDPOINT="http://tempo:4317"
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_SERVICE_NAME="APIGATEWAY-trance"
+
+  userservice:
+    <<: *microservice-config
+    image: "hcorptech/userservice:0.0.1"
+    container_name: userservice-ms
+    ports:
+      - "8081:8081"
+    environment:
+      - SERVER_PORT=8081
+      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+
+  plantmicroservice:
+    <<: *microservice-config
+    image: "hcorptech/plantmicroservice:0.0.1"
+    container_name: plantservice-ms
+    ports:
+      - "8082:8082"
+    environment:
+      - SERVER_PORT=8082
+      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+
+  helperservice:
+    <<: *microservice-config
+    image: "hcorptech/helperservice:0.0.1"
+    container_name: helperservice-ms
+    ports:
+      - "8083:8083"
+    environment:
+      - SERVER_PORT=8083
+      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      
+  orderservice:
+    <<: *microservice-config
+    image: "hcorptech/orderservice:0.0.1"
+    container_name: orderservice-ms
+    ports:
+      - "8086:8086"
+    environment:
+      - SERVER_PORT=8086
+      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+  uploadservice:
+    <<: *microservice-config
+    image: "hcorptech/uploadservice:0.0.1"
+    container_name: uploadservice-ms
+    ports:
+      - "8095:8095"
+    environment:
+      - SERVER_PORT=8095
+      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+  readerservice:
+    <<: *microservice-config
+    image: "hcorptech/readerservice:0.0.1"
+    container_name: readerservice-ms
+    ports:
+      - "8084:8084"
+    environment:
+      - SERVER_PORT=8084
+      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+
+  iotservice:
+    <<: *microservice-config
+    image: "docker.io/hcorptech/iotservice:0.0.1"
+    container_name: iotservice-ms
+    ports:
+      - "8085:8085"
+    environment:
+      - SERVER_PORT=8085
+      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+
+  loki:
+    <<: *common-config
+    image: grafana/loki:2.8.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+
+  grafana:
+    <<: *common-config
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./provisioning:/etc/grafana/provisioning
+    depends_on:
+      - loki
+
+  alloy:
+    <<: *common-config
+    image: grafana/alloy:v1.0.0
+    volumes:
+      - ./alloy-config.yml:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+    ports:
+      - 12345:12345
+    depends_on:
+      - grafana
+
+  prometheus:
+    <<: *common-config
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9009:9090"
+    volumes:
+      - ./monitering/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  tempo:
+    <<: *common-config
+    image: grafana/tempo:2.4.2
+    container_name: tempo
+    command: -config.file /etc/tempo-config.yml
+    ports:
+      - "3110:3100"
+      - "4317:4317"
+    volumes:
+      - ./monitering/tempo/tempo.yml:/etc/tempo-config.yml
+
+networks:
+  hindalco:
+    driver: "bridge"
+
+volumes:
+  mongodb_data:
+    driver: local
+  loki_data:
+    driver: local
+  grafana_data:
+    driver: local
+  alloy_data:
+    driver: local

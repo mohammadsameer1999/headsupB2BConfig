@@ -1,0 +1,35 @@
+global:
+  scrape_interval: 15s # How often to scrape targets by default
+
+scrape_configs:
+- job_name: 'eureka-server'
+  metrics_path: '/actuator/prometheus'
+  static_configs:
+  - targets: ['localhost:8761']
+
+- job_name: 'config-server'
+  metrics_path: '/actuator/prometheus'
+  static_configs:
+  - targets: ['configserver-ms:8888']
+
+- job_name: 'api-gateway'
+  metrics_path: '/actuator/prometheus'
+  static_configs:
+  - targets: ['apigateway-ms:9090']
+
+- job_name: 'user-service'
+  metrics_path: '/actuator/prometheus'
+  static_configs:
+  - targets: ['userservice-ms:8081']
+
+- job_name: 'plant-service'
+  metrics_path: '/actuator/prometheus'
+  static_configs:
+  - targets: ['plantservice-ms:8082']
+
+- job_name: 'helper-service'
+  metrics_path: '/actuator/prometheus'
+  static_configs:
+  - targets: ['helperservice-ms:8083']
+
+
