@@ -110,14 +110,14 @@ services:
       - SERVER_PORT=8083
       - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
       
-  orderservice:
+  orderheadsup:
     <<: *microservice-config
-    image: "hcorptech/orderservice:0.0.1"
-    container_name: orderservice-ms
+    image: "hcorptech/orderheadsup:0.0.1"
+    container_name: orderheadsup-ms
     ports:
       - "8086:8086"
     environment:
-      - SERVER_PORT=8086
+      - SERVER_PORT=8099
       - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
   uploadservice:
     <<: *microservice-config
