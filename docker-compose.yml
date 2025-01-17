@@ -15,9 +15,9 @@ x-microservice-config: &microservice-config
     - configserver
     - apigateway
   environment:
-    - MONGODB_HOST=159.89.171.87
+    - MONGODB_HOST=165.232.187.211
     - MONGODB_PORT=25755
-    - MONGODB_DATABASE=hindalco
+    - MONGODB_DATABASE=B2B
     - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
     - JWT_SECRET=abcd123abcd123
     - JWT_EXPIRATION=3600000
@@ -36,10 +36,10 @@ services:
     networks:
       - hindalco
       
-  discovery:
+  discoveryserverheadsup:
     <<: *common-config
-    image: "hcorptech/discoveryserver:0.0.1"
-    container_name: discovery-ms
+    image: "hcorptech/discoveryserverheadsup:0.0.1"
+    container_name: discoveryserverheadsup-ms
     ports:
       - "8761:8761"
     deploy:
@@ -47,10 +47,10 @@ services:
         limits:
           memory: 1200m
 
-  configserver:
+  configserverheadsup:
     <<: *common-config
-    image: "hcorptech/configserver:0.0.1"
-    container_name: configserver-ms
+    image: "hcorptech/configserverheadsup:0.0.1"
+    container_name: configserverheadsup-ms
     ports:
       - "8888:8888"
     depends_on:
@@ -59,18 +59,18 @@ services:
     environment:
       - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
 
-  apigateway:
+  gatewayserviceheadsup:
     <<: *common-config
-    image: "hcorptech/apigateway:0.0.1"
-    container_name: apigateway-ms
+    image: "hcorptech/apigatewayb2b:0.0.1"
+    container_name: gatewayserviceheadsup-ms
     ports:
       - "80:9090"
     depends_on:
       - discovery
     environment:
-      - MONGODB_HOST=159.89.171.87
+      - MONGODB_HOST=165.232.187.211
       - MONGODB_PORT=25755
-      - MONGODB_DATABASE=hindalco
+      - MONGODB_DATABASE=B2B
       - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
       - SERVER_PORT=9090
       - JWT_SECRET=abcd123abcd123
@@ -80,10 +80,10 @@ services:
       - OTEL_METRICS_EXPORTER=none
       - OTEL_SERVICE_NAME="APIGATEWAY-trance"
 
-  userservice:
+  userheadsup:
     <<: *microservice-config
-    image: "hcorptech/userservice:0.0.1"
-    container_name: userservice-ms
+    image: "hcorptech/userheadsup:0.0.1"
+    container_name: userheadsup-ms
     ports:
       - "8081:8081"
     environment:
@@ -100,10 +100,10 @@ services:
       - SERVER_PORT=8082
       - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
 
-  helperservice:
+  helperheadsup:
     <<: *microservice-config
-    image: "hcorptech/helperservice:0.0.1"
-    container_name: helperservice-ms
+    image: "hcorptech/helperserviceb2b:0.0.1"
+    container_name: helperheadsup-ms
     ports:
       - "8083:8083"
     environment:
