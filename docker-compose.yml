@@ -11,7 +11,7 @@ x-common-config: &common-config
 x-microservice-config: &microservice-config
   <<: *common-config
   depends_on:
-    - discovery
+    - discoveryserverheadsup
     - configserverheadsup
     - apigateway
   environment:
