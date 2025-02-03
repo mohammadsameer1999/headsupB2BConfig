@@ -119,10 +119,10 @@ services:
     environment:
       - SERVER_PORT=8099
       - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
-  uploadservice:
+  uploadserviceb2b:
     <<: *microservice-config
-    image: "hcorptech/uploadservice:0.0.1"
-    container_name: uploadservice-ms
+    image: "hcorptech/uploadserviceb2b:0.0.1"
+    container_name: uploadserviceb2b-ms
     ports:
       - "8095:8095"
     environment:
