@@ -54,7 +54,7 @@ services:
     ports:
       - "8888:8888"
     depends_on:
-      discovery:
+      discoveryserverheadsup:
         condition: service_started
     environment:
       - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
