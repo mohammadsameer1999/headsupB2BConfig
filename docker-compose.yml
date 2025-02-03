@@ -18,7 +18,7 @@ x-microservice-config: &microservice-config
     - MONGODB_HOST=165.232.187.211
     - MONGODB_PORT=25755
     - MONGODB_DATABASE=B2B
-    - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+    - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
     - JWT_SECRET=abcd123abcd123
     - JWT_EXPIRATION=3600000
 
@@ -57,7 +57,7 @@ services:
       discoveryserverheadsup:
         condition: service_started
     environment:
-      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
 
   gatewayserviceheadsup:
     <<: *common-config
@@ -71,7 +71,7 @@ services:
       - MONGODB_HOST=165.232.187.211
       - MONGODB_PORT=25755
       - MONGODB_DATABASE=B2B
-      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
       - SERVER_PORT=9090
       - JWT_SECRET=abcd123abcd123
       - JWT_EXPIRATION=3600000
@@ -88,7 +88,7 @@ services:
       - "8081:8081"
     environment:
       - SERVER_PORT=8081
-      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
 
   plantmicroservice:
     <<: *microservice-config
@@ -98,7 +98,7 @@ services:
       - "8082:8082"
     environment:
       - SERVER_PORT=8082
-      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
 
   helperheadsup:
     <<: *microservice-config
@@ -108,7 +108,7 @@ services:
       - "8083:8083"
     environment:
       - SERVER_PORT=8083
-      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
       
   orderheadsup:
     <<: *microservice-config
@@ -118,7 +118,7 @@ services:
       - "8086:8086"
     environment:
       - SERVER_PORT=8099
-      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
   uploadserviceb2b:
     <<: *microservice-config
     image: "hcorptech/uploadserviceb2b:0.0.1"
@@ -127,7 +127,7 @@ services:
       - "8095:8095"
     environment:
       - SERVER_PORT=8095
-      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
   readerservice:
     <<: *microservice-config
     image: "hcorptech/readerservice:0.0.1"
@@ -136,7 +136,7 @@ services:
       - "8084:8084"
     environment:
       - SERVER_PORT=8084
-      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
 
   iotservice:
     <<: *microservice-config
@@ -146,7 +146,7 @@ services:
       - "8085:8085"
     environment:
       - SERVER_PORT=8085
-      - EUREKA_DEFAULT_ZONE=http://discovery-ms:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
 
   loki:
     <<: *common-config
