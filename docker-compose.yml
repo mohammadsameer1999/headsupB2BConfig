@@ -12,7 +12,7 @@ x-microservice-config: &microservice-config
   <<: *common-config
   depends_on:
     - discovery
-    - configserver
+    - configserverheadsup
     - apigateway
   environment:
     - MONGODB_HOST=165.232.187.211
