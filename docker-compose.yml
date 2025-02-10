@@ -13,7 +13,7 @@ x-microservice-config: &microservice-config
   depends_on:
     - discoveryserverheadsup
     - configserverheadsup
-    - gatewayserviceheadsup
+    - apigatewayheadsup
   environment:
     - MONGODB_HOST=165.232.187.211
     - MONGODB_PORT=25755
@@ -32,7 +32,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
-      - gatewayserviceheadsup
+      - apigatewayheadsup
     networks:
       - hindalco
       
@@ -59,7 +59,7 @@ services:
     environment:
       - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
 
-  gatewayserviceheadsup:
+  apigatewayheadsup:
     <<: *common-config
     image: "hcorptech/apigatewayheadsup:0.0.1"
     container_name: apigatewayheadsup-ms
