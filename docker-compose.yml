@@ -61,8 +61,8 @@ services:
 
   gatewayserviceheadsup:
     <<: *common-config
-    image: "hcorptech/apigatewayb2b:0.0.1"
-    container_name: gatewayserviceheadsup-ms
+    image: "hcorptech/apigatewayheadsup:0.0.1"
+    container_name: apigatewayheadsup-ms
     ports:
       - "80:9090"
     depends_on:
