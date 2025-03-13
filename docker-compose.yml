@@ -90,15 +90,6 @@ services:
       - SERVER_PORT=8081
       - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
 
-  plantmicroservice:
-    <<: *microservice-config
-    image: "hcorptech/plantmicroservice:0.0.1"
-    container_name: plantservice-ms
-    ports:
-      - "8082:8082"
-    environment:
-      - SERVER_PORT=8082
-      - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
 
   helperheadsup:
     <<: *microservice-config
@@ -119,34 +110,18 @@ services:
     environment:
       - SERVER_PORT=8099
       - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
-  uploadserviceb2b:
+
+
+  uploadheadsup:
     <<: *microservice-config
-    image: "hcorptech/uploadserviceb2b:0.0.1"
-    container_name: uploadserviceb2b-ms
+    image: "hcorptech/uploadheadsup:0.0.1"
+    container_name: uploadheadsup-ms
     ports:
       - "8095:8095"
     environment:
       - SERVER_PORT=8095
       - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
-  readerservice:
-    <<: *microservice-config
-    image: "hcorptech/readerservice:0.0.1"
-    container_name: readerservice-ms
-    ports:
-      - "8084:8084"
-    environment:
-      - SERVER_PORT=8084
-      - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
 
-  iotservice:
-    <<: *microservice-config
-    image: "docker.io/hcorptech/iotservice:0.0.1"
-    container_name: iotservice-ms
-    ports:
-      - "8085:8085"
-    environment:
-      - SERVER_PORT=8085
-      - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
 
   loki:
     <<: *common-config
