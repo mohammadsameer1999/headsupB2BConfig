@@ -1,3 +1,5 @@
+version: '3'
+
 x-common-config: &common-config
   networks:
     - hindalco
