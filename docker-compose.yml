@@ -15,7 +15,7 @@ x-microservice-config: &microservice-config
     - configserverheadsup
     - apigatewayheadsup
   environment:
-    - MONGODB_HOST=165.232.187.211
+    - MONGODB_HOST=159.65.159.250
     - MONGODB_PORT=25755
     - MONGODB_DATABASE=B2B
     - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
@@ -68,7 +68,7 @@ services:
     depends_on:
       - discoveryserverheadsup
     environment:
-      - MONGODB_HOST=165.232.187.211
+      - MONGODB_HOST=159.65.159.250
       - MONGODB_PORT=25755
       - MONGODB_DATABASE=B2B
       - EUREKA_DEFAULT_ZONE=http://discoveryserverheadsup-ms:8761/eureka
